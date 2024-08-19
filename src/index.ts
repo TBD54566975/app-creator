@@ -55,6 +55,12 @@ async function updateCache(gitDir: string) {
     });
     s.stop("downloaded template library");
   }
+
+  await git.checkout({
+    fs,
+    dir: gitDir,
+    ref: "app-creator",
+  });
 }
 
 async function pickLanguage(gitDir: string): Promise<string | symbol> {

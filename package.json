@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "app-creator": "bin/app-creator.js"
+  },
   "scripts": {
     "start": "tsc && node dist/index.js"
   },
