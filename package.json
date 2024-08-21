@@ -1,11 +1,11 @@
 {
-  "name": "tbd-app-creator",
+  "name": "create-web5-app",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "app-creator": "bin/app-creator.js"
+    "app-creator": "bin/create-web5-app.js"
   },
   "scripts": {
     "start": "tsc && node dist/index.js"
