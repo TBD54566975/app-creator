@@ -1,15 +1,15 @@
 {
   "name": "create-web5-app",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "bin": {
     "create-web5-app": "bin/create-web5-app.js"
   },
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/index.js"
+    "create-web5-app": "tsc && bin/create-web5-app.js"
   },
   "keywords": [],
   "author": "",

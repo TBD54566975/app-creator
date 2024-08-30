@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-import '../dist/index.js';
+import main from '../dist/index.js';
+
+main('https://github.com/TBD54566975/tbd-examples.git', 'app-creator');

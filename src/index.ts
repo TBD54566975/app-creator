@@ -31,14 +31,24 @@ class TemplateVariable {
   }[];
 }
 
-async function updateCache(gitDir: string) {
+function getAnswer(question: string): string | null {
+  const env = question.toUpperCase().replaceAll("-", "_");
+  const answer = process.env[env];
+  if (answer) {
+    return answer;
+  }
+
+  return null;
+}
+
+async function updateCache(gitDir: string, repo: string, branch?: string) {
   const s = spinner();
   if (fs.existsSync(gitDir)) {
     s.start("updating template library");
     await git.pull({
       fs,
       http: http,
-      url: "https://github.com/TBD54566975/tbd-examples",
+      url: repo,
       dir: gitDir,
       author: { name: "user", email: "user@host" },
       singleBranch: true,
@@ -49,21 +59,24 @@ async function updateCache(gitDir: string) {
     await git.clone({
       fs,
       http: http,
-      url: "https://github.com/TBD54566975/tbd-examples",
+      url: repo,
       dir: gitDir,
       singleBranch: true,
     });
     s.stop("downloaded template library");
   }
 
-  await git.checkout({
-    fs,
-    dir: gitDir,
-    ref: "app-creator",
-  });
+  if (branch) {
+    await git.checkout({ fs, dir: gitDir, ref: branch });
+  }
 }
 
 async function pickLanguage(gitDir: string): Promise<string | symbol> {
+  const answer = getAnswer("language");
+  if (answer) {
+    return answer;
+  }
+
   let languages: { value: string; label: string; hint?: string }[] = [];
   for (let lang of fs.readdirSync(gitDir)) {
     if (lang.startsWith(".")) {
@@ -92,6 +105,8 @@ class TemplateData {
 async function pickTemplate(
   langDir: string
 ): Promise<TemplateData | Symbol | null> {
+  const preSelectedAnswer = getAnswer("template");
+
   let templates: { value: TemplateData; label: string; hint?: string }[] = [];
   for (let slug of fs.readdirSync(langDir)) {
     if (slug.startsWith(".")) {
@@ -118,8 +133,14 @@ async function pickTemplate(
       fs.readFileSync(templateConfig, "utf-8")
     );
 
+    const value: TemplateData = { slug, location, config };
+
+    if (preSelectedAnswer != null && preSelectedAnswer == slug) {
+      return value;
+    }
+
     templates.push({
-      value: { slug, location, config },
+      value: value,
       label: config.name || slug,
       hint: config.description,
     });
@@ -222,9 +243,12 @@ async function renderTemplate(
       question.name = name;
     }
 
-    const answer = await templateQuestion(question);
-    if (isCancel(answer)) {
-      return answer;
+    let answer = getAnswer(question);
+    if (answer == null) {
+      answer = await templateQuestion(question);
+      if (isCancel(answer)) {
+        return answer;
+      }
     }
 
     answers[name] = answer;
@@ -281,13 +305,13 @@ async function renderTemplateRecursive(
   }
 }
 
-async function main() {
+export default async function main(repo: string, branch?: string) {
   try {
     intro("Web5 App Creator");
     const cacheDir = await globalCacheDir("web5-app-creator");
     const gitDir = cacheDir + "/tbd-examples";
 
-    await updateCache(gitDir);
+    await updateCache(gitDir, repo, branch);
 
     const language = await pickLanguage(gitDir);
     if (isCancel(language)) {
@@ -334,5 +358,3 @@ async function main() {
     console.log("\n", e.stack || e);
   }
 }
-
-main();
