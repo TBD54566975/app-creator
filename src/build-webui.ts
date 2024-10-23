@@ -6,7 +6,10 @@ import {
   readFileSync,
   existsSync,
   statSync,
+  createWriteStream,
 } from "fs";
+
+import archiver from "archiver";
 
 const dest = "webui/public/data";
 
@@ -47,6 +50,17 @@ export default async function buildWebUI(src: string) {
           description: readme.toString(),
         })
       );
+
+      const outputZipStream = createWriteStream(
+        languageDest + "/" + template + ".zip"
+      );
+      const archive = archiver("zip", { zlib: { level: 9 } });
+      archive.on("error", function (err) {
+        throw err;
+      });
+      archive.pipe(outputZipStream);
+      archive.glob("*", { cwd: directory });
+      archive.finalize();
 
       templates.push({
         path: path,

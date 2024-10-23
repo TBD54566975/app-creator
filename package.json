@@ -16,12 +16,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@clack/prompts": "^0.7.0",
+    "archiver": "^7.0.1",
     "eta": "^3.5.0",
     "global-cache-dir": "^6.0.0",
     "is-invalid-path": "^1.0.2",
     "isomorphic-git": "^1.27.1"
   },
   "devDependencies": {
+    "@types/archiver": "^6.0.3",
     "@types/node": "^20.14.11",
     "typescript": "^5.5.3"
   }
