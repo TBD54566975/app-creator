@@ -4,7 +4,7 @@ import { onMounted, ref, type Ref } from 'vue'
 import VueMarkdown from 'vue-markdown-render'
 
 const props = defineProps(['path'])
-const template: Ref<TemplateMetadata> = ref({})
+const template: Ref<TemplateMetadata | null> = ref(null)
 
 onMounted(async () => {
   const templateDetailsRequest = await fetch('/data/' + props.path + '.json')
@@ -19,6 +19,6 @@ onMounted(async () => {
   <RouterLink to="/">&lt;- Return to list</RouterLink>
   <a :href="'/data/' + path + '.zip'">download .zip</a> | <a href="#">new GitHub repo</a>
   <div class="template-details">
-    <VueMarkdown :source="template.description" v-if="template.description != undefined" />
+    <VueMarkdown :source="template.description" v-if="template != null" />
   </div>
 </template>

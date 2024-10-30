@@ -1,4 +1,3 @@
-// const { readdirSync, readFileSync, existsSync, statSync } = require('node:fs')
 import {
   mkdirSync,
   writeFileSync,
