@@ -47,6 +47,7 @@ export default async function buildWebUI(src: string) {
           path: path,
           language: language,
           description: readme.toString(),
+          variables: config.variables,
         })
       );
 
