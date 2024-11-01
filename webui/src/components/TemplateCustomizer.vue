@@ -2,11 +2,13 @@
 import type { TemplateMetadata } from '@/templates'
 import { ref, type Ref } from 'vue'
 import { ZipArchive } from '@shortercode/webzip'
+import { Eta } from 'eta'
 
 const props = defineProps<{
   templateMetadata: TemplateMetadata
 }>()
 const values: Ref<Map<string, string>> = ref({})
+const eta = new Eta()
 
 async function download() {
   const downloadResp = await fetch('/data/' + props.templateMetadata.path + '.zip')
@@ -18,14 +20,14 @@ async function download() {
       break
     }
     const filename = entry.value[0]
-    const file = entry.value[1]
-    console.log(filename, file)
-    zip.set(filename, 'TEST LOL\n\n' + file.get_string())
+    const templateString = await entry.value[1].get_string()
+    const rendered = eta.renderString(templateString, values.value)
+    await zip.set(filename, rendered)
+    console.log('rendered', filename, '=>', rendered)
   }
 
   const blob = zip.to_blob()
-  const url = URL.createObjectURL(blob)
-  console.log('redirecting to', url)
+  const url = URL.createObjectURL(blob.slice(0, blob.size, 'application/zip')) // surely there's a better way to set the content type
   window.location.replace(url)
 }
 </script>

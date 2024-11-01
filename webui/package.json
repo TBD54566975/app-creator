@@ -17,6 +17,7 @@
   "dependencies": {
     "@shortercode/webzip": "^1.1.1-0",
     "@transcend-io/conflux": "^4.1.0",
+    "eta": "^3.5.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
     "vue-markdown-render": "^2.2.1",
